@@ -5,8 +5,6 @@ set positional-arguments := true
 
 ROOT_DIR := justfile_directory()
 
-COMPOSE_FILES := "-f {{ ROOT_DIR }}/compose/base.yml -f {{ ROOT_DIR }}/compose/dev.yml"
-
 goose-install goose-version="v3.27.0":
     #!/usr/bin/env bash
     goose_bin="$(go env GOPATH)/bin/goose"
@@ -37,21 +35,21 @@ db-status:
     goose -dir "{{ ROOT_DIR }}/compose" postgres "$DATABASE_URL" status
 
 docker-up:
-    docker compose {{ COMPOSE_FILES }} up -d
+    docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" up -d
 
 docker-down:
-    docker compose {{ COMPOSE_FILES }} down
+    docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" down
 
 docker-kill:
-    docker compose {{ COMPOSE_FILES }} down --rmi all --volumes --remove-orphans
+    docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" down --rmi all --volumes --remove-orphans
 
 docker-logs service="":
-    docker compose {{ COMPOSE_FILES }} logs {{ service }}
+    docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" logs {{ service }}
 
 health-check:
     #!/usr/bin/env bash
     for svc in db db-test redis; do
-      if ! docker compose {{ COMPOSE_FILES }} ps $$svc | grep -q "Up"; then
+      if ! docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" ps $$svc | grep -q "Up"; then
         echo "Service $$svc is not running"
         exit 1
       fi
@@ -59,6 +57,4 @@ health-check:
     echo "All services healthy"
 
 validate-compose:
-    docker compose {{ COMPOSE_FILES }} config --quiet
-
-.PHONY: docker-up docker-down docker-kill docker-logs health-check validate-compose
+    docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" config --quiet
