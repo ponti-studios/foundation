@@ -1,7 +1,7 @@
 # Test environment - ephemeral database
-# Usage: docker compose -f infra/compose/test.yml up
-# Teardown: docker compose -f infra/compose/test.yml down -v
-# Secrets: copy infra/compose/.env.example → infra/compose/.env
+# Usage: docker compose -f compose/test.yml up
+# Teardown: docker compose -f compose/test.yml down -v
+# Secrets: copy compose/.env.example → compose/.env
 #
 # NOTE: Port 4433 is shared with db-test in dev.yml.
 #       Do not run this alongside dev.yml simultaneously.
@@ -13,16 +13,16 @@ x-postgres-build: &postgres-build
     dockerfile: Dockerfile
 
 networks:
-  hominem-test:
+  foundation-test:
     driver: bridge
 
 volumes:
-  hominem-db-test:
+  foundation-db-test:
 
 services:
   db-test:
     <<: *postgres-build
-    container_name: hominem-db-test
+    container_name: foundation-db-test
     ports:
       - '4433:5432'
     environment:
@@ -30,7 +30,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_TEST_DB:-hominem-test}
     volumes:
-      - hominem-db-test:/var/lib/postgresql
+      - foundation-db-test:/var/lib/postgresql
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres}']
       interval: 10s
@@ -49,5 +49,5 @@ services:
         max-size: '10m'
         max-file: '3'
     networks:
-      - hominem-test
+      - foundation-test
     restart: 'no'

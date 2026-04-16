@@ -1,11 +1,11 @@
 # Shared configuration for all environments
-# Usage: docker compose -f infra/compose/base.yml -f infra/compose/dev.yml up
+# Usage: docker compose -f compose/base.yml -f compose/dev.yml up
 
 networks:
-  hominem:
+  foundation:
     driver: bridge
 
 volumes:
-  hominem-redis:
-  hominem-db:
-  hominem-db-test:
+  foundation-redis:
+  foundation-db:
+  foundation-db-test:

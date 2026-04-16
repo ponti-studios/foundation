@@ -1,5 +1,5 @@
 # Local development environment
-# Usage: docker compose -f infra/compose/base.yml -f infra/compose/dev.yml up
+# Usage: docker compose -f compose/base.yml -f compose/dev.yml up
 # Includes Redis and Postgres for local development.
 # Secrets: copy infra/compose/.env.example → infra/compose/.env
 
@@ -25,11 +25,11 @@ x-postgres-defaults: &postgres-defaults
 services:
   redis:
     image: redis:8.6.2-alpine
-    container_name: hominem-redis
+    container_name: foundation-redis
     ports:
       - 6379:6379
     volumes:
-      - hominem-redis:/data
+      - foundation-redis:/data
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
@@ -49,18 +49,18 @@ services:
         max-size: '10m'
         max-file: '3'
     networks:
-      - hominem
+      - foundation
 
   db:
     <<: *postgres-service
-    container_name: hominem-db
+    container_name: foundation-db
     ports:
       - '5434:5432'
     environment:
       <<: *postgres-defaults
       POSTGRES_DB: ${POSTGRES_DB:-hominem}
     volumes:
-      - hominem-db:/var/lib/postgresql
+      - foundation-db:/var/lib/postgresql
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres}']
       interval: 10s
@@ -75,18 +75,18 @@ services:
         reservations:
           memory: 512M
     networks:
-      - hominem
+      - foundation
 
   db-test:
     <<: *postgres-service
-    container_name: hominem-db-test
+    container_name: foundation-db-test
     ports:
       - '4433:5432'
     environment:
       <<: *postgres-defaults
       POSTGRES_DB: ${POSTGRES_TEST_DB:-hominem-test}
     volumes:
-      - hominem-db-test:/var/lib/postgresql
+      - foundation-db-test:/var/lib/postgresql
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres}']
       interval: 10s
@@ -101,6 +101,6 @@ services:
         reservations:
           memory: 256M
     networks:
-      - hominem
+      - foundation
 
 

@@ -5,7 +5,6 @@ set positional-arguments := true
 
 ROOT_DIR := justfile_directory()
 
-POSTGRES_IMAGE := "ghcr.io/ponti-studios/hominem/postgres:latest"
 COMPOSE_FILES := "-f {{ ROOT_DIR }}/compose/base.yml -f {{ ROOT_DIR }}/compose/dev.yml"
 
 goose-install goose-version="v3.27.0":
@@ -38,7 +37,7 @@ db-status:
     goose -dir "{{ ROOT_DIR }}/compose" postgres "$DATABASE_URL" status
 
 docker-up:
-    POSTGRES_IMAGE="{{ POSTGRES_IMAGE }}" docker compose {{ COMPOSE_FILES }} up -d
+    docker compose {{ COMPOSE_FILES }} up -d
 
 docker-down:
     docker compose {{ COMPOSE_FILES }} down
