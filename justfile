@@ -29,14 +29,7 @@ docker-logs service="":
     docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" logs {{ service }}
 
 health-check:
-    #!/usr/bin/env bash
-    for svc in db db-test redis; do
-      if ! docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" ps $$svc | grep -q "Up"; then
-        echo "Service $$svc is not running"
-        exit 1
-      fi
-    done
-    echo "All services healthy"
+    docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" ps | grep -E "(db|redis)" | grep -v "Up" | grep -q "Exit" && echo "A service is down" && exit 1; echo "All services healthy"
 
 validate-compose:
     docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" config --quiet
