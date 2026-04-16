@@ -16,24 +16,6 @@ goose-install goose-version="v3.27.0":
       echo "$(dirname "$goose_bin")" >> "$GITHUB_PATH"
     fi
 
-db-migrate:
-    #!/usr/bin/env bash
-    just goose-install
-    DATABASE_URL="${DATABASE_URL:-postgresql://postgres:postgres@127.0.0.1:5434/hominem}"
-    goose -dir "{{ ROOT_DIR }}/compose" postgres "$DATABASE_URL" up
-
-db-rollback:
-    #!/usr/bin/env bash
-    just goose-install
-    DATABASE_URL="${DATABASE_URL:-postgresql://postgres:postgres@127.0.0.1:5434/hominem}"
-    goose -dir "{{ ROOT_DIR }}/compose" postgres "$DATABASE_URL" down
-
-db-status:
-    #!/usr/bin/env bash
-    just goose-install
-    DATABASE_URL="${DATABASE_URL:-postgresql://postgres:postgres@127.0.0.1:5434/hominem}"
-    goose -dir "{{ ROOT_DIR }}/compose" postgres "$DATABASE_URL" status
-
 docker-up:
     docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" up -d
 

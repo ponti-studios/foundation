@@ -1,3 +1,19 @@
 .env
 *.log
 .DS_Store
+
+# Docker secrets
+secrets/
+*.secret
+*.key
+
+# Backup files
+backups/*.sql
+backups/*.dump
+
+# Environment files with secrets (keep .env.example committed)
+.env.local
+.env.production
+
+# Temporary files
+*.tmp
