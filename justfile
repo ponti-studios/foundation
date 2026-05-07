@@ -1,7 +1,7 @@
 #!/usr/bin/env just --justfile
 
 set shell := ["bash", "-euo", "pipefail", "-c"]
-set positional-arguments := true
+set positional-arguments
 
 ROOT_DIR := justfile_directory()
 
@@ -16,19 +16,19 @@ goose-install goose-version="v3.27.0":
       echo "$(dirname "$goose_bin")" >> "$GITHUB_PATH"
     fi
 
-docker-up:
+up:
     docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" up -d
 
-docker-down:
+down:
     docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" down
 
-docker-kill:
+kill:
     docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" down --rmi all --volumes --remove-orphans
 
-docker-logs service="":
+logs service="":
     docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" logs {{ service }}
 
-health-check:
+health:
     docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" ps | grep -E "(db|redis)" | grep -v "Up" | grep -q "Exit" && echo "A service is down" && exit 1; echo "All services healthy"
 
 validate-compose:
