@@ -1,4 +1,4 @@
-FROM pgvector/pgvector:0.8.2-pg18
+FROM pgvector/pgvector@sha256:42e7f6b4e1eceb02ff14e3e6bc6108bbe259abbe83879dc1845d0da1ddeb555d
 
 LABEL org.opencontainers.image.description="PostgreSQL 18 with pgvector, PostGIS, and pgRouting"
 

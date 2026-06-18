@@ -1,14 +1,13 @@
 # Local development environment
 # Usage: docker compose -f compose/base.yml -f compose/dev.yml up
-# Includes Redis and Postgres for local development.
-# Secrets: copy infra/compose/.env.example → infra/compose/.env
+# Includes Redis, Postgres, and MinIO for local development.
+# Secrets: copy compose/.env.example → compose/.env
 
-# Combined image + logging anchor for all postgres services
-# Uses pre-built image from ghcr.io (built via build-docker-images.yml workflow)
-# Falls back to building locally if image unavailable
-# To use the pre-built image in CI, ensure github.repository env var is set
+# Build the postgres image locally by default so the stack is reproducible
+# without depending on a mutable registry tag. Override POSTGRES_IMAGE to
+# point at a published artifact if you need to consume one instead.
 x-postgres-service: &postgres-service
-  image: ${POSTGRES_IMAGE:-postgres:latest}
+  image: ${POSTGRES_IMAGE:-foundation-postgres:18-pgvector-postgis}
   build:
     context: ../images/postgres
     dockerfile: Dockerfile
@@ -24,7 +23,7 @@ x-postgres-defaults: &postgres-defaults
 
 services:
   redis:
-    image: redis:8.6.2-alpine
+    image: redis@sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17
     container_name: foundation-redis
     ports:
       - 6379:6379
@@ -77,6 +76,39 @@ services:
     networks:
       - foundation
 
+  minio:
+    image: minio/minio@sha256:d249d1fb6966de4d8ad26c04754b545205ff15a62e4fd19ebd0f26fa5baacbc0
+    container_name: foundation-minio
+    command: server /data --console-address ":9001"
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    volumes:
+      - foundation-minio:/data
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -fsS http://localhost:9000/minio/health/live > /dev/null']
+      interval: 10s
+      timeout: 5s
+      start_period: 15s
+      retries: 5
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+    networks:
+      - foundation
+
   db-test:
     <<: *postgres-service
     container_name: foundation-db-test
@@ -102,5 +134,3 @@ services:
           memory: 256M
     networks:
       - foundation
-
-

@@ -9,3 +9,4 @@ volumes:
   foundation-redis:
   foundation-db:
   foundation-db-test:
+  foundation-minio:

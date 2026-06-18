@@ -1,6 +1,6 @@
 # foundation
 
-Shared infrastructure layer for the ponti-studios org. Single source of truth for PostgreSQL, Redis, compose stacks, CI/CD, and observability — consumed as published artifacts by labs and hominem.
+Shared infrastructure layer for the ponti-studios org. Single source of truth for PostgreSQL, Redis, compose stacks, and CI/CD — consumed as published artifacts by labs and hominem.
 
 ## What's here
 
@@ -8,25 +8,22 @@ Shared infrastructure layer for the ponti-studios org. Single source of truth fo
 foundation/
 ├── compose/              # Docker Compose stack (base, dev, test)
 ├── images/postgres/      # PostgreSQL 18 + pgvector + PostGIS + pgRouting
-├── observability/        # Jaeger, OTel, Sentry setup
-├── railway/              # Railway deployment templates and env examples
-├── scripts/              # Shared automation scripts
-├── docs/                 # Getting started and deployment guides
-├── .github/workflows/    # CI: image publishing, compose validation
+├── docs/                 # Local dev and deployment guides
+├── .github/workflows/    # CI: image publishing
 └── justfile              # Shared task runner
 ```
 
 ## Quick start
 
 ```bash
-# Start local infra (postgres + redis)
-just docker-up
+# Start local infra (postgres + redis + minio)
+just up
 
 # Verify services are healthy
-just health-check
+just health
 
 # Stop services
-just docker-down
+just down
 
 # Validate compose config
 just validate-compose
@@ -36,7 +33,7 @@ just validate-compose
 
 | Image | Registry | Description |
 |---|---|---|
-| PostgreSQL | `ghcr.io/ponti-studios/hominem/postgres:latest` | PG 18 + pgvector 0.8.2 + PostGIS + pgRouting |
+| PostgreSQL | `ghcr.io/ponti-studios/hominem/postgres@sha256:86cf2d9db9d56afb3238c55c4fdced6c011d3a1a8503e9e360f8ca82ded80124` | PG 18 + pgvector 0.8.2 + PostGIS + pgRouting |
 
 ## Consuming from labs or hominem
 
@@ -45,14 +42,10 @@ Use the published postgres image directly in your compose files:
 ```yaml
 services:
   db:
-    image: ghcr.io/ponti-studios/hominem/postgres:latest
+    image: ghcr.io/ponti-studios/hominem/postgres@sha256:86cf2d9db9d56afb3238c55c4fdced6c011d3a1a8503e9e360f8ca82ded80124
 ```
 
-Pin to a specific version:
-
-```bash
-ghcr.io/ponti-studios/hominem/postgres:0.8.2
-```
+Use the digest above when you need a reproducible production or staging deployment. The compose stack builds the same image locally by default.
 
 ## Local development
 
@@ -64,10 +57,10 @@ See [docs/RAILWAY_DEPLOYMENT.md](docs/RAILWAY_DEPLOYMENT.md)
 
 ## Publishing the postgres image
 
-The image is published automatically via GitHub Actions when a tag matching `postgres-v*` is pushed:
+Run the GitHub Actions workflow manually to bump the version tag and publish the image:
 
 ```bash
-git tag postgres-v0.8.2 && git push origin postgres-v0.8.2
+gh workflow run publish-postgres.yml -f version_part=patch
 ```
 
-Or trigger manually via GitHub Actions UI.
+The workflow creates a `postgres-v*` tag in the repo and publishes the image to GHCR as a semver tag. For deployment, prefer the digest-pinned reference above.

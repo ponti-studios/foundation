@@ -5,14 +5,10 @@
 In your Railway project, set the postgres service to use:
 
 ```
-ghcr.io/ponti-studios/hominem/postgres:latest
+ghcr.io/ponti-studios/hominem/postgres@sha256:86cf2d9db9d56afb3238c55c4fdced6c011d3a1a8503e9e360f8ca82ded80124
 ```
 
-Or pin to a specific version:
-
-```
-ghcr.io/ponti-studios/hominem/postgres:0.8.2
-```
+Use the digest-pinned reference above for production or staging. It is the stable deploy target produced by the publish workflow.
 
 ## Environment variables
 
@@ -25,4 +21,4 @@ ghcr.io/ponti-studios/hominem/postgres:0.8.2
 
 ## Railway templates
 
-See `railway/templates/` for service configuration templates.
+This repo does not currently ship Railway templates. Use the image and environment variable values above directly in your Railway service configuration.

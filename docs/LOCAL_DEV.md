@@ -9,15 +9,16 @@
 ## Start local infrastructure
 
 ```bash
-just docker-up
+just up
 ```
 
 This starts:
 - **postgres** on port `5434` (dev database)
 - **postgres-test** on port `4433` (test database)
 - **redis** on port `6379`
+- **minio** on ports `9000` and `9001`
 
-The postgres image is pulled from `ghcr.io/ponti-studios/hominem/postgres:latest`.
+The postgres image is built locally from the checked-in Dockerfile and tagged `foundation-postgres:18-pgvector-postgis` by default. Override `POSTGRES_IMAGE` in `compose/.env` only if you intentionally want to consume a published artifact instead.
 
 ## Environment variables
 
@@ -36,27 +37,23 @@ Default credentials:
 ## Health check
 
 ```bash
-just health-check
+just health
 ```
 
-## Run migrations
+## Migrations
 
-Set `DATABASE_URL` first, then:
-
-```bash
-DATABASE_URL=postgresql://postgres:postgres@localhost:5434/hominem just db-migrate
-```
+This repo does not ship application migrations. Run migrations from the consuming app or service that owns its schema.
 
 ## Stop services
 
 ```bash
-just docker-down
+just down
 ```
 
 ## Reset everything
 
 ```bash
-just docker-kill
+just kill
 ```
 
 ## Validate compose config
