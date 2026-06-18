@@ -1,0 +1,14 @@
+version: 1
+
+images:
+  postgres:
+    build:
+      context: images/postgres
+      base: pgvector/pgvector@sha256:42e7f6b4e1eceb02ff14e3e6bc6108bbe259abbe83879dc1845d0da1ddeb555d
+    runtime:
+      local_tag: foundation-postgres:18-pgvector-postgis
+      deploy_digest: ghcr.io/ponti-studios/hominem/postgres@sha256:86cf2d9db9d56afb3238c55c4fdced6c011d3a1a8503e9e360f8ca82ded80124
+    release:
+      workflow: .github/workflows/publish-postgres.yml
+      tag_prefix: postgres-v
+      trigger: push-main

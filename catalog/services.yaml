@@ -1,0 +1,20 @@
+version: 1
+
+services:
+  postgres:
+    dev_port: 5434
+    test_port: 4433
+    storage: foundation-db
+  postgres-test:
+    dev_port: 4433
+    storage: foundation-db-test
+  redis:
+    image: redis@sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17
+    port: 6379
+    storage: foundation-redis
+  minio:
+    image: minio/minio@sha256:d249d1fb6966de4d8ad26c04754b545205ff15a62e4fd19ebd0f26fa5baacbc0
+    ports:
+      - 9000
+      - 9001
+    storage: foundation-minio

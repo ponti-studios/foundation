@@ -6,10 +6,12 @@ Shared infrastructure layer for the ponti-studios org. Single source of truth fo
 
 ```
 foundation/
+├── catalog/              # Machine-readable image, service, and digest inventory
 ├── compose/              # Docker Compose stack (base, dev, test)
+├── docs/                 # Local dev, deploy, release, and security docs
 ├── images/postgres/      # PostgreSQL 18 + pgvector + PostGIS + pgRouting
-├── docs/                 # Local dev and deployment guides
-├── .github/workflows/    # CI: image publishing
+├── templates/            # Placeholder for future provider templates
+├── .github/workflows/    # CI and image publishing
 └── justfile              # Shared task runner
 ```
 
@@ -49,18 +51,26 @@ Use the digest above when you need a reproducible production or staging deployme
 
 ## Local development
 
-See [docs/LOCAL_DEV.md](docs/LOCAL_DEV.md)
+See [docs/local-dev.md](docs/local-dev.md)
 
-## Deploying to Railway
+## Deployment
 
-See [docs/RAILWAY_DEPLOYMENT.md](docs/RAILWAY_DEPLOYMENT.md)
+See [docs/deploy.md](docs/deploy.md)
+
+## Releases
+
+See [docs/releases.md](docs/releases.md)
+
+## Security
+
+See [docs/security.md](docs/security.md)
 
 ## Publishing the postgres image
 
-Run the GitHub Actions workflow manually to bump the version tag and publish the image:
+Pushes to `main` automatically bump the patch version tag and publish the image. Use a manual dispatch only when you need a major or minor bump:
 
 ```bash
-gh workflow run publish-postgres.yml -f version_part=patch
+gh workflow run publish-postgres.yml -f version_part=minor
 ```
 
 The workflow creates a `postgres-v*` tag in the repo and publishes the image to GHCR as a semver tag. For deployment, prefer the digest-pinned reference above.

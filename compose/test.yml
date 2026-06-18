@@ -1,7 +1,6 @@
 # Test environment - ephemeral database
 # Usage: docker compose -f compose/test.yml up
 # Teardown: docker compose -f compose/test.yml down -v
-# Secrets: copy compose/.env.example → compose/.env
 #
 # NOTE: Port 4433 is shared with db-test in dev.yml.
 #       Do not run this alongside dev.yml simultaneously.

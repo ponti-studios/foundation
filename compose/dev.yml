@@ -1,7 +1,6 @@
 # Local development environment
 # Usage: docker compose -f compose/base.yml -f compose/dev.yml up
 # Includes Redis, Postgres, and MinIO for local development.
-# Secrets: copy compose/.env.example → compose/.env
 
 # Build the postgres image locally by default so the stack is reproducible
 # without depending on a mutable registry tag. Override POSTGRES_IMAGE to
