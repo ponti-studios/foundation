@@ -3,7 +3,7 @@
 Use the digest-pinned postgres image for production or staging:
 
 ```text
-ghcr.io/ponti-studios/hominem/postgres@sha256:86cf2d9db9d56afb3238c55c4fdced6c011d3a1a8503e9e360f8ca82ded80124
+ghcr.io/ponti-studios/foundation/postgres@sha256:86cf2d9db9d56afb3238c55c4fdced6c011d3a1a8503e9e360f8ca82ded80124
 ```
 
 That digest is the stable deploy target produced by the publish workflow.

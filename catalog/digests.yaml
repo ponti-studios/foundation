@@ -4,7 +4,7 @@ digests:
   postgres_base:
     image: pgvector/pgvector@sha256:42e7f6b4e1eceb02ff14e3e6bc6108bbe259abbe83879dc1845d0da1ddeb555d
   postgres_deploy:
-    image: ghcr.io/ponti-studios/hominem/postgres@sha256:86cf2d9db9d56afb3238c55c4fdced6c011d3a1a8503e9e360f8ca82ded80124
+    image: ghcr.io/ponti-studios/foundation/postgres@sha256:86cf2d9db9d56afb3238c55c4fdced6c011d3a1a8503e9e360f8ca82ded80124
   redis:
     image: redis@sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17
   minio:

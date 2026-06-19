@@ -27,6 +27,8 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: ghcr.io/${{ github.repository }}/postgres
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
@@ -65,7 +67,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9
         with:
-          images: ghcr.io/ponti-studios/hominem/postgres
+          images: ${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=${{ steps.image_tag.outputs.version }}
 
@@ -74,5 +76,5 @@ jobs:
         with:
           context: images/postgres
           push: true
-          tags: ghcr.io/ponti-studios/hominem/postgres:${{ steps.image_tag.outputs.version }}
+          tags: ${{ env.IMAGE_NAME }}:${{ steps.image_tag.outputs.version }}
           labels: ${{ steps.meta.outputs.labels }}

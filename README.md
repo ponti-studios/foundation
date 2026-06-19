@@ -35,7 +35,7 @@ just validate-compose
 
 | Image | Registry | Description |
 |---|---|---|
-| PostgreSQL | `ghcr.io/ponti-studios/hominem/postgres@sha256:86cf2d9db9d56afb3238c55c4fdced6c011d3a1a8503e9e360f8ca82ded80124` | PG 18 + pgvector 0.8.2 + PostGIS + pgRouting |
+| PostgreSQL | `ghcr.io/ponti-studios/foundation/postgres@sha256:86cf2d9db9d56afb3238c55c4fdced6c011d3a1a8503e9e360f8ca82ded80124` | PG 18 + pgvector 0.8.2 + PostGIS + pgRouting |
 
 ## Consuming from labs or hominem
 
@@ -44,7 +44,7 @@ Use the published postgres image directly in your compose files:
 ```yaml
 services:
   db:
-    image: ghcr.io/ponti-studios/hominem/postgres@sha256:86cf2d9db9d56afb3238c55c4fdced6c011d3a1a8503e9e360f8ca82ded80124
+    image: ghcr.io/ponti-studios/foundation/postgres@sha256:86cf2d9db9d56afb3238c55c4fdced6c011d3a1a8503e9e360f8ca82ded80124
 ```
 
 Use the digest above when you need a reproducible production or staging deployment. The compose stack builds the same image locally by default.
