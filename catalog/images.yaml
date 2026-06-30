@@ -9,5 +9,5 @@ images:
       deploy_digest: ghcr.io/ponti-studios/foundation/postgres@sha256:86cf2d9db9d56afb3238c55c4fdced6c011d3a1a8503e9e360f8ca82ded80124
     release:
       workflow: .github/workflows/publish-postgres.yml
-      tag_prefix: postgres-v
+      tag_prefix: v
       trigger: push-main

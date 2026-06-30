@@ -73,4 +73,4 @@ Pushes to `main` automatically bump the patch version tag and publish the image.
 gh workflow run publish-postgres.yml -f version_part=minor
 ```
 
-The workflow creates a `postgres-v*` tag in the repo and publishes the image to GHCR as a semver tag. For deployment, prefer the digest-pinned reference above.
+The workflow creates a canonical `v*` git tag in the repo and publishes the image to GHCR as the matching semver image tag without the `v` prefix. For deployment, prefer the digest-pinned reference above.

@@ -6,8 +6,8 @@ The postgres image is released from `.github/workflows/publish-postgres.yml`.
 
 1. Merge to `main`.
 2. The workflow bumps the patch version by default.
-3. The workflow tags the repo as `postgres-v*`.
-4. The workflow publishes the image to GHCR using the semver tag.
+3. The workflow maintains canonical git tags as `v*`.
+4. The workflow publishes the image to GHCR using the matching semver image tag without the `v` prefix.
 5. Use manual dispatch only when you need a major or minor bump.
 
 ## Version policy
