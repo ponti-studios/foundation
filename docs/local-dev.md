@@ -14,7 +14,7 @@ This starts:
 - `redis` on port `6379`
 - `minio` on ports `9000` and `9001`
 
-The postgres image is built locally from the checked-in Dockerfile and tagged `foundation-postgres:18-pgvector-postgis` by default. Override `POSTGRES_IMAGE` in your shell only if you intentionally want to consume a published artifact instead.
+The postgres image is built locally from the checked-in Dockerfile. If you need the published artifact for debugging, use the digest-pinned reference from [README.md](../README.md#images).
 
 ## Health
 
