@@ -35,35 +35,19 @@ just validate-compose
 
 | Image | Registry | Description |
 |---|---|---|
-| PostgreSQL | `ghcr.io/ponti-studios/foundation/postgres@sha256:86cf2d9db9d56afb3238c55c4fdced6c011d3a1a8503e9e360f8ca82ded80124` | PG 18 + pgvector 0.8.2 + PostGIS + pgRouting |
+| PostgreSQL | `ghcr.io/ponti-studios/foundation/postgres` | PG 18 + pgvector 0.8.2 + PostGIS + pgRouting |
 
 ## Consuming from labs or hominem
 
-Use the published postgres image directly in your compose files:
+The canonical image reference lives in `compose/` — use that as the source of truth. For production, pin the digest from the latest published build.
 
-```yaml
-services:
-  db:
-    image: ghcr.io/ponti-studios/foundation/postgres@sha256:86cf2d9db9d56afb3238c55c4fdced6c011d3a1a8503e9e360f8ca82ded80124
-```
+- Local development: [docs/development.md](docs/development.md)
 
-Use the digest above when you need a reproducible production or staging deployment. The compose stack builds the same image locally by default.
+- Deployment: [docs/deploy.md](docs/deploy.md)
 
-## Local development
+- Releases: [docs/releases.md](docs/releases.md)
 
-See [docs/local-dev.md](docs/local-dev.md)
-
-## Deployment
-
-See [docs/deploy.md](docs/deploy.md)
-
-## Releases
-
-See [docs/releases.md](docs/releases.md)
-
-## Security
-
-See [docs/security.md](docs/security.md)
+- Security: [docs/security.md](docs/security.md)
 
 ## Publishing the postgres image
 
