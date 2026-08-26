@@ -4,14 +4,12 @@ Use the digest-pinned Postgres image for local CI or a self-managed PostgreSQL
 deployment:
 
 ```text
-ghcr.io/ponti-studios/foundation/postgres@sha256:86cf2d9db9d56afb3238c55c4fdced6c011d3a1a8503e9e360f8ca82ded80124
+ghcr.io/ponti-studios/foundation/postgres@sha256:615d9ab611151583f435d9550a3a3563fbb6a7dd23c7279e9c43c4164d96c0a3
 ```
 
-That digest is the last published deploy target produced by the publish
-workflow. The source changes for the upgrade are not deployable until the
-publish workflow produces a new image and digest. Railway's existing
-PostgreSQL service is not replaced by a second database. Hominem services
-continue to use Railway's injected `DATABASE_URL`.
+That digest is the published `1.0.10` deploy target produced by the publish
+workflow. Railway's existing PostgreSQL service is not replaced by a second
+database. Hominem services continue to use Railway's injected `DATABASE_URL`.
 
 ## Railway custom Postgres
 
