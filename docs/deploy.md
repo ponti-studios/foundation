@@ -4,10 +4,10 @@ Use the digest-pinned Postgres image for local CI or a self-managed PostgreSQL
 deployment:
 
 ```text
-ghcr.io/ponti-studios/foundation/postgres@sha256:615d9ab611151583f435d9550a3a3563fbb6a7dd23c7279e9c43c4164d96c0a3
+ghcr.io/ponti-studios/foundation/postgres@sha256:578d34f82b21752b9e749776e955fadc85e1cba8d962e78bce1bd60878a9c316
 ```
 
-That digest is the published `1.0.10` deploy target produced by the publish
+That digest is the published `1.0.11` deploy target produced by the publish
 workflow. Railway's existing PostgreSQL service is not replaced by a second
 database. Hominem services continue to use Railway's injected `DATABASE_URL`.
 
@@ -25,21 +25,22 @@ custom image from this repository. The deployment flow is:
    new image during its configured update window. Trigger an approved manual
    redeploy only when the release needs to happen sooner.
 5. Keep the existing Railway volume mounted at
-   `/var/lib/postgresql/data`, and keep the existing database variables and
+   `/var/lib/postgresql`, and keep the existing database variables and
    service references unchanged.
 6. Verify PostgreSQL connectivity, extension versions, Hominem `/api/status`,
    migrations, and application smoke tests.
 
-Railway must have read-only GHCR credentials for the private image. Railway's
-Docker-image service model supports this workflow and preserves the service's
+The public GHCR package lets Railway pull the image without registry
+credentials. Railway's Docker-image service model preserves the service's
 volume across deployments. The service is already configured for automatic
 updates of `:latest`; confirm the deployment completes before running database
 verification.
 
-For this upgrade, take a Railway backup or snapshot first. PostgreSQL 18.6 is
-a minor upgrade and does not require dump/restore. After the new container is
-healthy, check and update installed extensions in the target database as
-needed:
+For maintenance, take a Railway volume backup when the dashboard makes one
+available and always create and verify a custom-format `pg_dump` before any
+database mutation. Railway PITR is unavailable for this custom image. After
+the new container is healthy, check and update only installed extensions in the
+target database as needed:
 
 ```sql
 SELECT version();
@@ -49,14 +50,14 @@ WHERE extname IN ('vector', 'postgis', 'pgrouting')
 ORDER BY extname;
 
 ALTER EXTENSION vector UPDATE;
-ALTER EXTENSION postgis UPDATE;
-ALTER EXTENSION pgrouting UPDATE;
 ```
 
-Run the `ALTER EXTENSION` statements only when the corresponding extension is
-installed and an update is available. Rollback means redeploying the previous
-image digest against the same volume; do not delete or recreate the Railway
-database service.
+Run an `ALTER EXTENSION` statement only when that extension is installed and
+an update is available. Hominem currently requires `vector`; do not install
+PostGIS or pgRouting just because the image includes them. After an extension
+upgrade, recover from the verified dump or a pre-change volume backup before
+reverting the image, since a legacy image alone can have incompatible extension
+binaries. Do not delete or recreate the Railway database service.
 
 ## Environment
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Foundation Database"
+  short_description: "Publish Foundation PostgreSQL safely"
+  default_prompt: "Maintain Foundation's PostgreSQL image, release records, and Railway deployment contract."
