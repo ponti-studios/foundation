@@ -91,5 +91,7 @@ jobs:
         with:
           context: images/postgres
           push: true
-          tags: ${{ env.IMAGE_NAME }}:${{ steps.image_tag.outputs.version }}
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ steps.image_tag.outputs.version }}
+            ${{ env.IMAGE_NAME }}:latest
           labels: ${{ steps.meta.outputs.labels }}

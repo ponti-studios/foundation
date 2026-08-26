@@ -18,7 +18,7 @@ logs service="":
     docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" logs {{ service }}
 
 health:
-    docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" ps | grep -E "(db|redis|minio)" | grep -E "(Exit|unhealthy|starting)" && echo "A service is down" && exit 1; echo "All services healthy"
+    for service in db db-test redis minio jaeger otel-collector; do if ! docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" ps --status running --services | grep -qx "$$service"; then echo "Service is not running: $$service"; exit 1; fi; done; echo "All services running"
 
 validate-compose:
     docker compose -f "{{ ROOT_DIR }}/compose/base.yml" -f "{{ ROOT_DIR }}/compose/dev.yml" config --quiet

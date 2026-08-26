@@ -1,6 +1,7 @@
 # Local development environment
 # Usage: docker compose -f compose/base.yml -f compose/dev.yml up
-# Includes Redis, Postgres, and MinIO for local development.
+# Includes Redis, Postgres, MinIO, OpenTelemetry Collector, and Jaeger for
+# local development.
 
 # Build the postgres image locally so the stack stays reproducible without a
 # mutable registry tag.
@@ -11,14 +12,52 @@ x-postgres-service: &postgres-service
   logging:
     driver: json-file
     options:
-      max-size: '10m'
-      max-file: '3'
+      max-size: "10m"
+      max-file: "3"
 
 x-postgres-defaults: &postgres-defaults
   POSTGRES_USER: ${POSTGRES_USER:-postgres}
   POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
 
 services:
+  jaeger:
+    image: jaegertracing/all-in-one:1.70.0
+    container_name: foundation-jaeger
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "127.0.0.1:16686:16686"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:14269/"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - foundation
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.123.0
+    container_name: foundation-otel-collector
+    command: ["--config=/etc/otelcol-contrib/config.yaml"]
+    volumes:
+      - ../observability/collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    ports:
+      - "127.0.0.1:4317:4317"
+      - "127.0.0.1:4318:4318"
+      - "127.0.0.1:13133:13133"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:13133/"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    depends_on:
+      jaeger:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - foundation
+
   redis:
     image: redis@sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17
     container_name: foundation-redis
@@ -27,7 +66,7 @@ services:
     volumes:
       - foundation-redis:/data
     healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
+      test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       start_period: 10s
@@ -42,8 +81,8 @@ services:
     logging:
       driver: json-file
       options:
-        max-size: '10m'
-        max-file: '3'
+        max-size: "10m"
+        max-file: "3"
     networks:
       - foundation
 
@@ -51,14 +90,14 @@ services:
     <<: *postgres-service
     container_name: foundation-db
     ports:
-      - '5434:5432'
+      - "5434:5432"
     environment:
       <<: *postgres-defaults
       POSTGRES_DB: ${POSTGRES_DB:-hominem}
     volumes:
       - foundation-db:/var/lib/postgresql
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres}']
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
       interval: 10s
       timeout: 5s
       start_period: 30s
@@ -78,8 +117,8 @@ services:
     container_name: foundation-minio
     command: server /data --console-address ":9001"
     ports:
-      - '9000:9000'
-      - '9001:9001'
+      - "9000:9000"
+      - "9001:9001"
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
@@ -87,7 +126,7 @@ services:
       - foundation-minio:/data
       - ../images/minio/init:/docker-entrypoint-initaws.d
     healthcheck:
-      test: ['CMD-SHELL', 'curl -fsS http://localhost:9000/minio/health/live > /dev/null']
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9000/minio/health/live > /dev/null"]
       interval: 10s
       timeout: 5s
       start_period: 15s
@@ -102,8 +141,8 @@ services:
     logging:
       driver: json-file
       options:
-        max-size: '10m'
-        max-file: '3'
+        max-size: "10m"
+        max-file: "3"
     networks:
       - foundation
 
@@ -111,14 +150,14 @@ services:
     <<: *postgres-service
     container_name: foundation-db-test
     ports:
-      - '4433:5432'
+      - "4433:5432"
     environment:
       <<: *postgres-defaults
       POSTGRES_DB: ${POSTGRES_TEST_DB:-hominem-test}
     volumes:
       - foundation-db-test:/var/lib/postgresql
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres}']
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
       interval: 10s
       timeout: 5s
       start_period: 30s

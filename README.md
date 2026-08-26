@@ -10,6 +10,7 @@ foundation/
 ├── compose/              # Docker Compose stack (base, dev, test)
 ├── docs/                 # Local dev, deploy, release, and security docs
 ├── images/postgres/      # PostgreSQL 18 + pgvector + PostGIS + pgRouting
+├── observability/        # Local OpenTelemetry Collector configuration
 ├── templates/            # Placeholder for future provider templates
 ├── .github/workflows/    # CI and image publishing
 └── justfile              # Shared task runner
@@ -18,7 +19,7 @@ foundation/
 ## Quick start
 
 ```bash
-# Start local infra (postgres + redis + minio)
+# Start local infra (postgres + redis + minio + observability)
 just up
 
 # Verify services are healthy
@@ -35,7 +36,7 @@ just validate-compose
 
 | Image | Registry | Description |
 |---|---|---|
-| PostgreSQL | `ghcr.io/ponti-studios/foundation/postgres` | PG 18 + pgvector 0.8.2 + PostGIS + pgRouting |
+| PostgreSQL | `ghcr.io/ponti-studios/foundation/postgres` | PG 18 + pgvector 0.8.6 + PostGIS 3.6.4 + pgRouting |
 
 ## Consuming from labs or hominem
 
